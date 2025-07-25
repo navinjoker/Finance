@@ -1,0 +1,20 @@
+
+import yfinance as yf
+import pandas as pd
+
+def download_data(tickers, start='2010-01-01', end='2024-12-31'):
+    data = yf.download(tickers, start=start, end=end)['Adj Close']
+    data = data.dropna()
+    return data
+
+def compute_log_returns(prices):
+    return (prices / prices.shift(1)).apply(np.log).dropna()
+
+def normalize(df):
+    return (df - df.mean()) / df.std()
+
+if __name__ == "__main__":
+    tickers = ['SPY', 'QQQ', 'GLD', 'TLT', 'XLE', 'XLV']
+    prices = download_data(tickers)
+    log_returns = compute_log_returns(prices)
+    log_returns.to_csv('data/log_returns.csv')
